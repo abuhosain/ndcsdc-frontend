@@ -2,155 +2,138 @@
 
 import { useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
-import { logout } from "@/services/auth";
-import { useRouter } from "@/i18n/navigation";
-import type { AuthMe } from "@/types/auth";
-
-type NavbarClientProps = {
-  user: AuthMe | null;
-};
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
-  { label: "Home",     href: "/" },
-  // Add more public links here
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Summit", href: "/summit" },
+  { label: "Activities", href: "/activities" },
+  { label: "Team", href: "/team" },
+  { label: "Partners", href: "/partners" },
+  { label: "Contact", href: "/contact" },
 ];
 
-export default function NavbarClient({ user }: NavbarClientProps) {
+export default function NavbarClient() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [signingOut, setSigningOut] = useState(false);
-  const router = useRouter();
-
-  async function handleLogout() {
-    setSigningOut(true);
-    await logout();
-    router.push("/login");
-    router.refresh();
-  }
+  const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-      <div className="container">
-        <div className="flex items-center justify-between h-16">
+    <header className="sticky top-0 z-50 bg-ink text-ink-onDark red-bottom-bar shadow-md">
+      <div className="container-custom">
+        <div className="flex items-center justify-between h-20">
+          
+          {/* Dual Crest & Club Branding */}
+          <Link
+            href="/"
+            className="flex items-center gap-3.5 group shrink-0"
+            onClick={() => setMenuOpen(false)}
+          >
+            <div className="flex items-center gap-2 bg-surface-1 p-1 rounded-md border border-border/50">
+              <div className="relative w-8 h-8 flex items-center justify-center bg-white rounded-sm overflow-hidden">
+                <Image
+                  src="/logos/ndc-college-logo.jpeg"
+                  alt="Notre Dame College Crest"
+                  width={32}
+                  height={32}
+                  className="object-contain"
+                  priority
+                />
+              </div>
+              <div className="w-[1px] h-6 bg-border"></div>
+              <div className="relative w-8 h-8 flex items-center justify-center bg-white rounded-sm overflow-hidden">
+                <Image
+                  src="/logos/ndcsdc-logo.jpeg"
+                  alt="NDCSDC Seal"
+                  width={32}
+                  height={32}
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </div>
 
-          {/* Brand */}
-          <Link href="/" className="text-lg font-bold text-gray-900 tracking-tight">
-            {/* Replace with your logo / brand name */}
-            MyPortal
+            <div className="flex flex-col">
+              <span className="font-display font-extrabold text-base tracking-wider uppercase text-white leading-none">
+                NDCSDC
+              </span>
+              <span className="text-[11px] text-ink-muted tracking-tight mt-1 hidden sm:block">
+                Notre Dame Career & Skill Development Club
+              </span>
+            </div>
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+          {/* Desktop Nav Links */}
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+            {NAV_LINKS.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-3.5 py-2 text-sm font-semibold transition-colors rounded-md ${
+                    isActive
+                      ? "text-white bg-white/10"
+                      : "text-neutral-300 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
-          {/* Auth — desktop */}
-          <div className="hidden md:flex items-center gap-3">
-            {user ? (
-              <>
-                <Link
-                  href="/dashboard"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  Dashboard
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  disabled={signingOut}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-600 rounded-xl hover:bg-brand-700 transition-colors disabled:opacity-60"
-                >
-                  <LogOut className="w-4 h-4" />
-                  {signingOut ? "Signing out…" : "Sign Out"}
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  className="px-4 py-2 text-sm font-medium text-white bg-brand-600 rounded-xl hover:bg-brand-700 transition-colors"
-                >
-                  Get Started
-                </Link>
-              </>
-            )}
+          {/* Register Action CTA */}
+          <div className="hidden sm:flex items-center gap-3">
+            <Link
+              href="/summit/register"
+              className="btn-primary text-xs uppercase tracking-wider py-2.5 px-5 font-bold"
+            >
+              Register
+            </Link>
           </div>
 
-          {/* Mobile hamburger */}
+          {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-gray-600 hover:text-gray-900"
-            onClick={() => setMenuOpen((o) => !o)}
-            aria-label="Toggle menu"
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="lg:hidden p-2 text-neutral-300 hover:text-white"
+            aria-label="Toggle navigation menu"
           >
-            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile Drawer */}
       {menuOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 flex flex-col gap-3">
-          {NAV_LINKS.map((link) => (
+        <div className="lg:hidden bg-ink border-t border-neutral-800 px-5 py-6 space-y-2">
+          {NAV_LINKS.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className={`block px-4 py-3 text-sm font-semibold rounded-md transition-colors ${
+                  isActive
+                    ? "bg-brand text-white"
+                    : "text-neutral-300 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+          <div className="pt-4 border-t border-neutral-800">
             <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-gray-700 hover:text-gray-900"
+              href="/summit/register"
               onClick={() => setMenuOpen(false)}
+              className="w-full btn-primary text-center block text-xs uppercase tracking-wider py-3 font-bold"
             >
-              {link.label}
+              Register for Summit
             </Link>
-          ))}
-          <div className="border-t border-gray-100 pt-3 flex flex-col gap-2">
-            {user ? (
-              <>
-                <Link
-                  href="/dashboard"
-                  className="flex items-center gap-2 text-sm font-medium text-gray-700"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  <User className="w-4 h-4" />
-                  {user.name ?? user.email}
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  disabled={signingOut}
-                  className="btn-primary text-left"
-                >
-                  {signingOut ? "Signing out…" : "Sign Out"}
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="text-sm font-medium text-gray-700"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  className="btn-primary text-center"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Get Started
-                </Link>
-              </>
-            )}
           </div>
         </div>
       )}

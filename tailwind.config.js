@@ -9,75 +9,63 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        /* === Brand — swap these to match the project === */
-        brand: {
-          50:  "#eef2ff",
-          100: "#e0e7ff",
-          200: "#c7d2fe",
-          300: "#a5b4fc",
-          400: "#818cf8",
-          500: "#6366f1",
-          600: "#4f46e5",
-          700: "#4338ca",
-          800: "#3730a3",
-          900: "#312e81",
-          950: "#1e1b4b",
+        /* Core Brand Tokens (05_DESIGN.md) */
+        ink: {
+          DEFAULT: "#1A1614",
+          secondary: "#4A4540",
+          muted: "#6E685E",
+          onDark: "#F5EFE0",
+          pure: "#110E0C",
         },
-        /* Neutral grays */
-        gray: {
-          50:  "#fafafa",
-          100: "#f5f5f5",
-          200: "#e5e5e5",
-          300: "#d4d4d4",
-          400: "#a3a3a3",
-          500: "#737373",
-          600: "#525252",
-          700: "#404040",
-          800: "#262626",
-          900: "#171717",
-          950: "#0a0a0a",
+        brand: {
+          DEFAULT: "#A81818",
+          hover: "#8F1313",
+          bright: "#D91A1A",
+          maroon: "#6B2E2A",
+          gold: "#E8C547",
+        },
+        /* Canvas & Surfaces - Proposal Authentic Palette */
+        canvas: {
+          DEFAULT: "#E6E0CD",
+          light: "#EFEADB",
+          white: "#FFFFFF",
+        },
+        surface: {
+          1: "#EFEADB",
+          2: "#E6E0CD",
+          sand: "#B8B09A",
+          card: "#F4EFE2",
+          muted: "#DFD8C4",
+        },
+        border: {
+          DEFAULT: "#B9B29E",
+          subtle: "#CBC4B1",
+          strong: "#9E9783",
         },
         /* Semantic */
-        success: "#22c55e",
-        warning: "#f59e0b",
-        error:   "#ef4444",
-        info:    "#3b82f6",
+        success: "#2E7D32",
+        warning: "#B7791F",
+        error: "#B3261E",
+        info: "#1F5FA8",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
+        sans: ["var(--font-inter)", "system-ui", "-apple-system", "sans-serif"],
+        display: ["var(--font-poppins)", "var(--font-inter)", "sans-serif"],
+        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
-      spacing: {
-        18: "4.5rem",
-        22: "5.5rem",
-        26: "6.5rem",
-        30: "7.5rem",
+      borderRadius: {
+        DEFAULT: "8px",
+        card: "10px",
+        lg: "10px",
+        xl: "12px",
+      },
+      boxShadow: {
+        subtle: "0 1px 3px rgba(26, 22, 20, 0.05)",
+        card: "0 4px 12px rgba(26, 22, 20, 0.06)",
+        cardHover: "0 8px 24px rgba(26, 22, 20, 0.10)",
       },
       maxWidth: {
-        container: "1280px",
-      },
-      animation: {
-        fadeInUp:    "fadeInUp 0.6s ease-out forwards",
-        slideInLeft: "slideInLeft 0.6s ease-out forwards",
-        slideInRight:"slideInRight 0.6s ease-out forwards",
-        shimmer:     "shimmer 1.8s infinite",
-      },
-      keyframes: {
-        fadeInUp: {
-          from: { opacity: "0", transform: "translateY(24px)" },
-          to:   { opacity: "1", transform: "translateY(0)" },
-        },
-        slideInLeft: {
-          from: { opacity: "0", transform: "translateX(-32px)" },
-          to:   { opacity: "1", transform: "translateX(0)" },
-        },
-        slideInRight: {
-          from: { opacity: "0", transform: "translateX(32px)" },
-          to:   { opacity: "1", transform: "translateX(0)" },
-        },
-        shimmer: {
-          "0%":   { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
-        },
+        container: "1200px",
       },
     },
   },

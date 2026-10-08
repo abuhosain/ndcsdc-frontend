@@ -3,215 +3,164 @@
 @tailwind utilities;
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   CSS Custom Properties — override these to theme any portal
+   NDCSDC Strict Design System (05_DESIGN.md & 06_UIUX_SPEC.md)
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
-  /* Surfaces */
-  --background:        #ffffff;
-  --surface:           #ffffff;
-  --surface-elevated:  #fafafa;
-  --surface-muted:     #f5f5f5;
+  --ink: #1A1614;
+  --ink-secondary: #4A4540;
+  --ink-muted: #6E685E;
+  --ink-onDark: #F5EFE0;
 
-  /* Foreground */
-  --foreground:        #0a0a0a;
-  --text-primary:      #0a0a0a;
-  --text-secondary:    #525252;
-  --text-muted:        #a3a3a3;
-  --text-inverse:      #ffffff;
+  --brand-red: #A81818;
+  --brand-red-hover: #8F1313;
 
-  /* Brand (matches tailwind `brand-600`) */
-  --brand:             #4f46e5;
-  --brand-hover:       #4338ca;
-  --brand-light:       #eef2ff;
-
-  /* Borders */
-  --border:            #e5e5e5;
-  --border-strong:     #d4d4d4;
-
-  /* Semantic */
-  --success:           #22c55e;
-  --warning:           #f59e0b;
-  --error:             #ef4444;
-  --info:              #3b82f6;
-
-  /* Shadows */
-  --shadow-sm:  0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow:     0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-md:  0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-lg:  0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --canvas: #E6E0CD;
+  --surface-1: #EFEADB;
+  --surface-sand: #B8B09A;
+  --border: #B9B29E;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Base Reset
-   ───────────────────────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
 }
 
 html {
   scroll-behavior: smooth;
-}
-
-html, body {
-  max-width: 100vw;
-  overflow-x: hidden;
+  color-scheme: light;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  color: var(--ink);
+  background-color: var(--canvas);
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.6;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-img, video {
-  max-width: 100%;
-  display: block;
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-poppins), var(--font-inter), sans-serif;
+  letter-spacing: -0.02em;
+  color: var(--ink);
 }
 
 /* Scrollbar */
-::-webkit-scrollbar        { width: 6px; height: 6px; }
-::-webkit-scrollbar-track  { background: var(--surface-muted); }
-::-webkit-scrollbar-thumb  { background: var(--border-strong); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #EFEADB;
+}
+::-webkit-scrollbar-thumb {
+  background: #B9B29E;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A81818;
+}
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Layout Utilities
+   Layout & Spacing System (8px grid, generous whitespace)
    ───────────────────────────────────────────────────────────────────────────── */
-.container {
-  @apply mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8;
+.container-custom {
+  @apply mx-auto max-w-[1200px] px-5 sm:px-8;
 }
 
 .section-padding {
-  @apply py-16 md:py-24;
+  @apply py-16 sm:py-24 lg:py-28;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Typography
-   ───────────────────────────────────────────────────────────────────────────── */
-.page-title {
-  @apply text-3xl md:text-4xl font-bold tracking-tight text-[var(--text-primary)];
+.section-padding-sm {
+  @apply py-12 sm:py-16;
 }
 
-.page-subtitle {
-  @apply text-lg text-[var(--text-secondary)] max-w-2xl;
+/* Section Title Pattern (05_DESIGN.md §3.4) */
+.section-eyebrow {
+  @apply block text-xs font-bold uppercase tracking-[0.1em] text-brand mb-2;
 }
 
 .section-title {
-  @apply text-2xl md:text-3xl font-bold tracking-tight text-[var(--text-primary)];
+  @apply font-display text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase text-ink tracking-tight mb-4;
+}
+
+.section-desc {
+  @apply text-base text-ink-secondary max-w-2xl leading-relaxed;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Cards
+   Cards & Editorial Surfaces
    ───────────────────────────────────────────────────────────────────────────── */
-.card {
-  @apply bg-[var(--surface)] border border-[var(--border)] rounded-2xl;
-  box-shadow: var(--shadow-sm);
+.card-flat {
+  @apply bg-surface-1 border border-border rounded-card transition-all duration-150;
 }
 
-.card-hover {
-  @apply transition-shadow duration-200;
+.card-flat:hover {
+  @apply border-ink/40 -translate-y-[2px];
 }
 
-.card-hover:hover {
-  box-shadow: var(--shadow-md);
+.card-white {
+  @apply bg-white border border-border rounded-card transition-all duration-150;
+}
+
+.card-white:hover {
+  @apply border-brand/50 -translate-y-[2px];
+}
+
+.card-ink {
+  @apply bg-ink text-ink-onDark border border-neutral-800 rounded-card;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Buttons (CSS class variants — prefer the Button component)
+   Buttons (Refined, no glowing shadows)
    ───────────────────────────────────────────────────────────────────────────── */
 .btn-primary {
-  @apply inline-flex items-center justify-center px-5 py-2.5 rounded-xl
-         font-semibold text-sm text-white bg-brand-600
-         hover:bg-brand-700 active:bg-brand-800
-         transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm text-white bg-brand hover:bg-brand-hover active:translate-y-[1px] transition-all duration-150 cursor-pointer;
 }
 
 .btn-secondary {
-  @apply inline-flex items-center justify-center px-5 py-2.5 rounded-xl
-         font-semibold text-sm border border-[var(--border-strong)]
-         bg-[var(--surface)] text-[var(--text-primary)]
-         hover:bg-[var(--surface-muted)] transition-colors duration-150
-         disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm text-ink bg-transparent border-2 border-ink hover:bg-ink hover:text-ink-onDark active:translate-y-[1px] transition-all duration-150 cursor-pointer;
+}
+
+.btn-on-dark {
+  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm text-ink bg-surface-1 hover:bg-white active:translate-y-[1px] transition-all duration-150 cursor-pointer;
+}
+
+.btn-ghost {
+  @apply inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-semibold text-ink hover:text-brand transition-colors cursor-pointer;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Signature Brand Lines & Motifs (from proposal)
+   ───────────────────────────────────────────────────────────────────────────── */
+.red-bottom-bar {
+  border-bottom: 3px solid #A81818;
+}
+
+.red-top-bar {
+  border-top: 3px solid #A81818;
+}
+
+.red-left-bar {
+  border-left: 4px solid #A81818;
+}
+
+/* Subtle Geometric Motifs */
+.motif-triangles-dark {
+  background-image: 
+    linear-gradient(135deg, rgba(168, 24, 24, 0.08) 25%, transparent 25%),
+    linear-gradient(225deg, rgba(26, 22, 20, 0.12) 25%, transparent 25%);
+  background-size: 40px 40px;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Form Inputs
    ───────────────────────────────────────────────────────────────────────────── */
-.input-base {
-  @apply w-full px-4 py-3 rounded-xl border border-[var(--border)]
-         bg-[var(--surface)] text-[var(--text-primary)]
-         placeholder:text-[var(--text-muted)]
-         focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500
-         transition duration-150
-         disabled:opacity-50 disabled:cursor-not-allowed;
+.input-clean {
+  @apply w-full h-12 px-4 rounded-lg border border-border bg-surface-1 text-ink placeholder:text-ink-muted text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors;
 }
 
-.label-base {
-  @apply block text-sm font-medium text-[var(--text-primary)] mb-1.5;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   Badges
-   ───────────────────────────────────────────────────────────────────────────── */
-.badge {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
-}
-
-.badge-brand   { @apply bg-brand-100 text-brand-700; }
-.badge-success { @apply bg-green-100 text-green-700; }
-.badge-warning { @apply bg-amber-100 text-amber-700; }
-.badge-error   { @apply bg-red-100 text-red-700; }
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   Animations
-   ───────────────────────────────────────────────────────────────────────────── */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-32px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(32px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-@keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.animate-fadeInUp    { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
-.animate-slideInLeft { animation: slideInLeft 0.6s ease-out forwards; opacity: 0; }
-.animate-slideInRight{ animation: slideInRight 0.6s ease-out forwards; opacity: 0; }
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(99,102,241,0.08), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 1.8s infinite;
-}
-
-.animation-delay-100 { animation-delay: 0.1s; }
-.animation-delay-200 { animation-delay: 0.2s; }
-.animation-delay-300 { animation-delay: 0.3s; }
-.animation-delay-400 { animation-delay: 0.4s; }
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   Skeleton Loader
-   ───────────────────────────────────────────────────────────────────────────── */
-.skeleton {
-  @apply rounded-lg bg-[var(--surface-muted)];
-  background: linear-gradient(90deg, var(--surface-muted) 25%, var(--border) 50%, var(--surface-muted) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.8s infinite;
+.label-clean {
+  @apply block text-xs font-bold uppercase tracking-wider text-ink-secondary mb-1.5;
 }
