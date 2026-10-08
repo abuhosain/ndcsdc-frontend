@@ -1,0 +1,34 @@
+{
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "login": "Sign In",
+    "signup": "Create Account",
+    "logout": "Sign Out"
+  },
+  "auth": {
+    "loginTitle": "Sign in to your account",
+    "signupTitle": "Create your account",
+    "emailLabel": "Email address",
+    "passwordLabel": "Password",
+    "nameLabel": "Full name",
+    "loginButton": "Sign In",
+    "signupButton": "Create Account",
+    "loggingIn": "Signing in...",
+    "signingUp": "Creating account...",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "forgotPassword": "Forgot password?"
+  },
+  "dashboard": {
+    "welcome": "Welcome back",
+    "title": "Dashboard"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "required": "This field is required.",
+    "invalidEmail": "Please enter a valid email address.",
+    "passwordMin": "Password must be at least 8 characters."
+  }
+}
