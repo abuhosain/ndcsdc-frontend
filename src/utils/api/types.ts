@@ -3,6 +3,7 @@ export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 export type ApiBody =
     | FormData
     | Record<string, unknown>
+    | Record<string, any>
     | unknown[]
     | string
     | number

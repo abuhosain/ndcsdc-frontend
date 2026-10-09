@@ -1,10 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { ChevronDown, ArrowUpRight } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import {
+  getSummitTracks,
+  getSummitSchedule,
+  getSummitFaqs,
+  type SummitTrack,
+  type ScheduleItem,
+  type FaqItem,
+} from "@/services/summit";
 
-const TRACKS_DETAIL = [
+const DEFAULT_TRACKS_DETAIL = [
   {
     id: "IBA",
     title: "IBA & Business Leadership Track",
@@ -67,17 +75,17 @@ const TRACKS_DETAIL = [
   },
 ];
 
-const SCHEDULE = [
-  { time: "08:30 – 09:30", title: "Participant Check-In & Welcome Kit Distribution", room: "College Gate & Registration Desk", type: "Check-In" },
-  { time: "09:30 – 10:30", title: "Grand Inaugural Ceremony & Keynote Speeches", room: "Main Auditorium", type: "Ceremony" },
-  { time: "10:45 – 12:45", title: "Track-Wise Masterclasses & Mentorship Sessions", room: "Designated Halls A, B, C & Science Building", type: "Masterclass" },
-  { time: "12:45 – 01:45", title: "Lunch & Networking Prayer Break", room: "College Dining & Courtyard", type: "Break" },
-  { time: "02:00 – 03:30", title: "Simulated National Mock Examination", room: "Designated Examination Halls", type: "Mock Test" },
-  { time: "03:45 – 04:45", title: "Live Paper Solution & Career Guidance Panel", room: "Main Auditorium", type: "Panel" },
-  { time: "05:00 – 06:00", title: "Closing Ceremony, Prize Giving & Certificate Distribution", room: "Main Auditorium", type: "Awards" },
+const DEFAULT_SCHEDULE = [
+  { time: "08:30 – 09:30", title: "Participant Check-In & Welcome Kit Distribution", hall: "College Gate & Registration Desk", type: "Check-In" },
+  { time: "09:30 – 10:30", title: "Grand Inaugural Ceremony & Keynote Speeches", hall: "Main Auditorium", type: "Ceremony" },
+  { time: "10:45 – 12:45", title: "Track-Wise Masterclasses & Mentorship Sessions", hall: "Designated Halls A, B, C & Science Building", type: "Masterclass" },
+  { time: "12:45 – 01:45", title: "Lunch & Networking Prayer Break", hall: "College Dining & Courtyard", type: "Break" },
+  { time: "02:00 – 03:30", title: "Simulated National Mock Examination", hall: "Designated Examination Halls", type: "Mock Test" },
+  { time: "03:45 – 04:45", title: "Live Paper Solution & Career Guidance Panel", hall: "Main Auditorium", type: "Panel" },
+  { time: "05:00 – 06:00", title: "Closing Ceremony, Prize Giving & Certificate Distribution", hall: "Main Auditorium", type: "Awards" },
 ];
 
-const FAQS = [
+const DEFAULT_FAQS = [
   {
     q: "Who is eligible to participate in NACS 2026?",
     a: "HSC Batch 2026, 2027, and 2028 students from Science, Commerce, and Humanities backgrounds from all colleges across Bangladesh are eligible to attend.",
@@ -101,102 +109,164 @@ const FAQS = [
 ];
 
 export default function SummitPage() {
+  const [tracksDetail, setTracksDetail] = useState(DEFAULT_TRACKS_DETAIL);
+  const [schedule, setSchedule] = useState(DEFAULT_SCHEDULE);
+  const [faqs, setFaqs] = useState(DEFAULT_FAQS);
   const [activeTrackTab, setActiveTrackTab] = useState("IBA");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
+  useEffect(() => {
+    let isMounted = true;
+    async function loadSummitData() {
+      try {
+        const [tracksRes, schedRes, faqsRes] = await Promise.allSettled([
+          getSummitTracks(),
+          getSummitSchedule(),
+          getSummitFaqs(),
+        ]);
+
+        if (isMounted) {
+          if (tracksRes.status === "fulfilled" && tracksRes.value.data && tracksRes.value.data.length > 0) {
+            const apiTracks = tracksRes.value.data.map((t: SummitTrack) => {
+              const matchedDefault = DEFAULT_TRACKS_DETAIL.find(
+                (d) => d.id.toLowerCase() === t.stream?.toLowerCase() || d.id === t.name
+              );
+              return {
+                id: t.stream || t.name,
+                title: t.name,
+                stream: t.stream || "All Streams",
+                hall: t.hall || "Main Campus Hall",
+                mockTime: "02:00 PM – 03:30 PM",
+                overview: t.description || matchedDefault?.overview || "Comprehensive preparation for national admission exams.",
+                syllabus: matchedDefault?.syllabus || [
+                  "Comprehensive Syllabus Review",
+                  "Advanced Problem-Solving Frameworks",
+                  "Full-Length Mock Examination",
+                ],
+              };
+            });
+            setTracksDetail(apiTracks);
+            if (apiTracks.length > 0) {
+              setActiveTrackTab(apiTracks[0].id);
+            }
+          }
+
+          if (schedRes.status === "fulfilled" && schedRes.value.data && schedRes.value.data.length > 0) {
+            setSchedule(
+              schedRes.value.data.map((s: ScheduleItem) => ({
+                time: s.time,
+                title: s.title,
+                hall: s.hall || "Main Hall",
+                type: s.type || "Session",
+              }))
+            );
+          }
+
+          if (faqsRes.status === "fulfilled" && faqsRes.value.data && faqsRes.value.data.length > 0) {
+            setFaqs(
+              faqsRes.value.data.map((f: FaqItem) => ({
+                q: f.q,
+                a: f.a,
+              }))
+            );
+          }
+        }
+      } catch {
+        // Use defaults
+      }
+    }
+    loadSummitData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <div className="bg-canvas">
-      
       {/* 1. Header Banner */}
-      <section className="bg-ink text-ink-onDark red-bottom-bar py-16 sm:py-24">
+      <section className="bg-ink text-ink-onDark red-bottom-bar py-6 sm:py-8 lg:py-10">
         <div className="container-custom">
-          <div className="max-w-3xl space-y-4">
-            
+          <div className="max-w-3xl space-y-3">
             <div className="inline-flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-[0.15em] text-brand-bright bg-white/5 border border-white/10 px-3 py-1 rounded">
+              <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-brand-bright bg-white/5 border border-white/10 px-2.5 py-0.5 rounded">
                 Flagship Summit 2026
               </span>
-              <span className="text-xs text-neutral-400 font-semibold">
+              <span className="text-[11px] text-neutral-400 font-semibold">
                 Registration Open
               </span>
             </div>
 
-            <h1 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl uppercase text-white tracking-tight leading-tight">
+            <h1 className="font-display font-extrabold text-2xl sm:text-3xl lg:text-4xl uppercase text-white tracking-tight leading-tight">
               1st National Academic <br />
               <span className="text-brand-bright">Career Summit</span> 2026
             </h1>
 
-            <p className="text-base sm:text-lg text-neutral-300 leading-relaxed max-w-2xl">
+            <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed max-w-2xl">
               Saturday, 14 November 2026 &bull; Notre Dame College Campus, Motijheel, Dhaka. A full-day summit gathering 1,800+ students for admissions mentorship, expert masterclasses, and simulated mock exams.
             </p>
 
-            <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <Link
                 href="/summit/register"
-                className="btn-primary text-xs uppercase tracking-wider py-3.5 px-8 font-bold text-center"
+                className="btn-primary text-xs uppercase tracking-wider py-2.5 px-6 font-bold text-center"
               >
                 Register for Free Pass
               </Link>
             </div>
-
           </div>
         </div>
       </section>
 
       {/* 2. Overview & Stat Boxes */}
       <section className="section-padding container-custom">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          <div className="p-6 sm:p-8 bg-surface-1 border border-border rounded-card">
-            <div className="font-display font-extrabold text-3xl sm:text-4xl text-brand mb-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
+          <div className="p-4 sm:p-6 bg-surface-1 border border-border rounded-card">
+            <div className="font-display font-extrabold text-2xl sm:text-3xl text-brand mb-0.5">
               1,800+
             </div>
-            <div className="font-bold text-sm text-ink uppercase mb-1">
+            <div className="font-bold text-xs sm:text-sm text-ink uppercase mb-0.5">
               Expected Students
             </div>
-            <p className="text-xs text-ink-secondary">
+            <p className="text-[11px] sm:text-xs text-ink-secondary">
               Delegates from Notre Dame College and prominent institutions across Bangladesh.
             </p>
           </div>
 
-          <div className="p-6 sm:p-8 bg-surface-1 border border-border rounded-card">
-            <div className="font-display font-extrabold text-3xl sm:text-4xl text-brand mb-1">
+          <div className="p-4 sm:p-6 bg-surface-1 border border-border rounded-card">
+            <div className="font-display font-extrabold text-2xl sm:text-3xl text-brand mb-0.5">
               1 Full Day
             </div>
-            <div className="font-bold text-sm text-ink uppercase mb-1">
+            <div className="font-bold text-xs sm:text-sm text-ink uppercase mb-0.5">
               Intensive Program
             </div>
-            <p className="text-xs text-ink-secondary">
+            <p className="text-[11px] sm:text-xs text-ink-secondary">
               From morning keynote to afternoon mock exams and evening awards ceremony.
             </p>
           </div>
 
-          <div className="p-6 sm:p-8 bg-surface-1 border border-border rounded-card">
-            <div className="font-display font-extrabold text-3xl sm:text-4xl text-brand mb-1">
+          <div className="p-4 sm:p-6 bg-surface-1 border border-border rounded-card">
+            <div className="font-display font-extrabold text-2xl sm:text-3xl text-brand mb-0.5">
               4 Tracks
             </div>
-            <div className="font-bold text-sm text-ink uppercase mb-1">
+            <div className="font-bold text-xs sm:text-sm text-ink uppercase mb-0.5">
               Specialized Pathways
             </div>
-            <p className="text-xs text-ink-secondary">
+            <p className="text-[11px] sm:text-xs text-ink-secondary">
               Targeted preparation for IBA, BUET, Medical and Abroad higher studies.
             </p>
           </div>
         </div>
 
         {/* 3. Track Tabs & Syllabus Breakdown */}
-        <div className="mb-20">
-          <div className="text-center max-w-xl mx-auto mb-10">
-            <span className="section-eyebrow">
-              Curriculum & Drills
-            </span>
-            <h2 className="section-title">
-              Track Breakdown
-            </h2>
+        <div className="mb-8 sm:mb-12">
+          <div className="text-center max-w-xl mx-auto mb-6">
+            <span className="section-eyebrow">Curriculum & Drills</span>
+            <h2 className="section-title">Track Breakdown</h2>
           </div>
 
           {/* Track Switcher */}
           <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
-            {TRACKS_DETAIL.map((trk) => (
+            {tracksDetail.map((trk) => (
               <button
                 key={trk.id}
                 onClick={() => setActiveTrackTab(trk.id)}
@@ -212,100 +282,98 @@ export default function SummitPage() {
           </div>
 
           {/* Selected Track Detail Card */}
-          {TRACKS_DETAIL.filter((t) => t.id === activeTrackTab).map((track) => (
-            <div
-              key={track.id}
-              className="bg-surface-1 border border-border rounded-card p-6 sm:p-10 max-w-4xl mx-auto"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-border">
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-brand">
-                    {track.stream} &bull; {track.hall}
-                  </span>
-                  <h3 className="font-display font-bold text-2xl uppercase text-ink mt-0.5">
-                    {track.title}
-                  </h3>
-                </div>
-
-                <Link
-                  href={`/summit/register?track=${track.id}`}
-                  className="btn-primary text-xs uppercase tracking-wider py-2.5 px-6 font-bold self-start sm:self-center shrink-0"
-                >
-                  Register This Track
-                </Link>
-              </div>
-
-              <p className="text-sm text-ink-secondary leading-relaxed mb-8">
-                {track.overview}
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-border">
-                <div>
-                  <h4 className="font-display font-bold text-xs uppercase tracking-wider text-ink mb-3">
-                    Masterclass Syllabus:
-                  </h4>
-                  <ul className="space-y-2">
-                    {track.syllabus.map((item, idx) => (
-                      <li key={idx} className="text-xs text-ink flex items-start gap-2">
-                        <span className="text-brand font-bold">&bull;</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="bg-canvas p-5 rounded border border-border space-y-3 text-xs">
+          {tracksDetail
+            .filter((t) => t.id === activeTrackTab)
+            .map((track) => (
+              <div
+                key={track.id}
+                className="bg-surface-1 border border-border rounded-card p-6 sm:p-10 max-w-4xl mx-auto shadow-sm"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-border">
                   <div>
-                    <span className="font-bold uppercase text-ink-muted text-[10px] block">
-                      Mock Examination Window:
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-brand">
+                      {track.stream} &bull; {track.hall}
                     </span>
-                    <span className="font-bold text-ink">{track.mockTime}</span>
+                    <h3 className="font-display font-bold text-2xl uppercase text-ink mt-0.5">
+                      {track.title}
+                    </h3>
                   </div>
+
+                  <Link
+                    href={`/summit/register?track=${encodeURIComponent(track.id)}`}
+                    className="btn-primary text-xs uppercase tracking-wider py-2.5 px-6 font-bold self-start sm:self-center shrink-0"
+                  >
+                    Register This Track
+                  </Link>
+                </div>
+
+                <p className="text-sm text-ink-secondary leading-relaxed mb-8">
+                  {track.overview}
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-border">
                   <div>
-                    <span className="font-bold uppercase text-ink-muted text-[10px] block">
-                      Designated Hall:
-                    </span>
-                    <span className="font-bold text-ink">{track.hall}</span>
+                    <h4 className="font-display font-bold text-xs uppercase tracking-wider text-ink mb-3">
+                      Masterclass Syllabus:
+                    </h4>
+                    <ul className="space-y-2">
+                      {track.syllabus.map((item: string, idx: number) => (
+                        <li key={idx} className="text-xs text-ink flex items-start gap-2">
+                          <span className="text-brand font-bold">&bull;</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <p className="text-ink-secondary pt-2 border-t border-border text-[11px]">
-                    Includes printed question paper, evaluation, and national rank list feedback.
-                  </p>
+
+                  <div className="bg-canvas p-5 rounded border border-border space-y-3 text-xs">
+                    <div>
+                      <span className="font-bold uppercase text-ink-muted text-[10px] block">
+                        Mock Examination Window:
+                      </span>
+                      <span className="font-bold text-ink">{track.mockTime}</span>
+                    </div>
+                    <div>
+                      <span className="font-bold uppercase text-ink-muted text-[10px] block">
+                        Designated Hall:
+                      </span>
+                      <span className="font-bold text-ink">{track.hall}</span>
+                    </div>
+                    <p className="text-ink-secondary pt-2 border-t border-border text-[11px]">
+                      Includes printed question paper, evaluation, and national rank list feedback.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
 
         {/* 4. Program Schedule Timeline */}
-        <div className="mb-20">
-          <div className="text-center max-w-xl mx-auto mb-10">
-            <span className="section-eyebrow">
-              Schedule Timeline
-            </span>
-            <h2 className="section-title">
-              Program Schedule &bull; 14 Nov 2026
-            </h2>
+        <div className="mb-8 sm:mb-12">
+          <div className="text-center max-w-xl mx-auto mb-6">
+            <span className="section-eyebrow">Schedule Timeline</span>
+            <h2 className="section-title">Program Schedule &bull; 14 Nov 2026</h2>
           </div>
 
-          <div className="max-w-3xl mx-auto border border-border rounded-card bg-surface-1 overflow-hidden divide-y divide-border">
-            {SCHEDULE.map((item, idx) => (
+          <div className="max-w-3xl mx-auto border border-border rounded-card bg-surface-1 overflow-hidden divide-y divide-border shadow-sm">
+            {schedule.map((item, idx) => (
               <div
                 key={idx}
-                className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white transition-colors"
+                className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 hover:bg-white transition-colors"
               >
-                <div className="flex items-start sm:items-center gap-4">
-                  <div className="w-10 h-10 rounded bg-canvas border border-border flex items-center justify-center text-xs font-mono font-bold text-ink shrink-0">
+                <div className="flex items-start sm:items-center gap-3">
+                  <div className="w-8 h-8 rounded bg-canvas border border-border flex items-center justify-center text-xs font-mono font-bold text-ink shrink-0">
                     {String(idx + 1).padStart(2, "0")}
                   </div>
                   <div>
-                    <div className="text-xs font-bold font-mono text-brand mb-0.5">
+                    <div className="text-[11px] font-bold font-mono text-brand mb-0.5">
                       {item.time} &bull; <span className="uppercase text-ink-muted">{item.type}</span>
                     </div>
-                    <div className="font-display font-bold text-sm sm:text-base uppercase text-ink">
+                    <div className="font-display font-bold text-xs sm:text-sm uppercase text-ink">
                       {item.title}
                     </div>
-                    <div className="text-xs text-ink-secondary mt-0.5">
-                      {item.room}
+                    <div className="text-[11px] text-ink-secondary mt-0.5">
+                      {item.hall}
                     </div>
                   </div>
                 </div>
@@ -316,22 +384,18 @@ export default function SummitPage() {
 
         {/* 5. FAQ Accordion */}
         <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-8">
-            <span className="section-eyebrow">
-              Help & Information
-            </span>
-            <h2 className="section-title">
-              Frequently Asked Questions
-            </h2>
+          <div className="text-center mb-6">
+            <span className="section-eyebrow">Help & Information</span>
+            <h2 className="section-title">Frequently Asked Questions</h2>
           </div>
 
           <div className="space-y-3">
-            {FAQS.map((faq, index) => {
+            {faqs.map((faq, index) => {
               const isOpen = openFaq === index;
               return (
                 <div
                   key={index}
-                  className="bg-surface-1 border border-border rounded-card overflow-hidden"
+                  className="bg-surface-1 border border-border rounded-card overflow-hidden shadow-sm"
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : index)}
@@ -356,7 +420,6 @@ export default function SummitPage() {
             })}
           </div>
         </div>
-
       </section>
     </div>
   );

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   NDCSDC Strict Design System (05_DESIGN.md & 06_UIUX_SPEC.md)
+   NDCSDC Strict Design System (Tightened Editorial Rhythm)
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
   --ink: #1A1614;
@@ -33,8 +33,8 @@ body {
   color: var(--ink);
   background-color: var(--canvas);
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
-  font-size: 16px;
-  line-height: 1.7;
+  font-size: 15px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -47,8 +47,8 @@ h1, h2, h3, h4, .font-heading {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: #EFEADB;
@@ -61,78 +61,87 @@ h1, h2, h3, h4, .font-heading {
   background: #A81818;
 }
 
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
-   Layout & Spacing System (8px grid, generous whitespace)
+   Layout & Spacing System (Tight, Compact Spacing)
    ───────────────────────────────────────────────────────────────────────────── */
 .container-custom {
-  @apply mx-auto max-w-[1200px] px-5 sm:px-8;
+  @apply mx-auto max-w-[1200px] px-3.5 sm:px-6 lg:px-8;
 }
 
 .section-padding {
-  @apply py-16 sm:py-24 lg:py-28;
+  @apply py-6 sm:py-8 lg:py-10;
 }
 
 .section-padding-sm {
-  @apply py-12 sm:py-16;
+  @apply py-3.5 sm:py-5;
 }
 
-/* Section Title Pattern (05_DESIGN.md §3.4) */
+/* Section Title Pattern */
 .section-eyebrow {
-  @apply block text-xs font-bold uppercase tracking-[0.1em] text-brand mb-2;
+  @apply block text-[10px] font-bold uppercase tracking-[0.1em] text-brand mb-1;
 }
 
 .section-title {
-  @apply font-display text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase text-ink tracking-tight mb-4;
+  @apply font-display text-lg sm:text-xl lg:text-2xl font-bold uppercase text-ink tracking-tight mb-1.5 leading-tight;
 }
 
 .section-desc {
-  @apply text-base text-ink-secondary max-w-2xl leading-relaxed;
+  @apply text-xs sm:text-[13px] text-ink-secondary max-w-2xl leading-relaxed;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Cards & Editorial Surfaces
    ───────────────────────────────────────────────────────────────────────────── */
 .card-flat {
-  @apply bg-surface-1 border border-border rounded-card transition-all duration-150;
+  @apply bg-surface-1 border border-border rounded-lg transition-all duration-150;
 }
 
 .card-flat:hover {
-  @apply border-ink/40 -translate-y-[2px];
+  @apply border-ink/40 -translate-y-[1px];
 }
 
 .card-white {
-  @apply bg-white border border-border rounded-card transition-all duration-150;
+  @apply bg-white border border-border rounded-lg transition-all duration-150;
 }
 
 .card-white:hover {
-  @apply border-brand/50 -translate-y-[2px];
+  @apply border-brand/50 -translate-y-[1px];
 }
 
 .card-ink {
-  @apply bg-ink text-ink-onDark border border-neutral-800 rounded-card;
+  @apply bg-ink text-ink-onDark border border-neutral-800 rounded-lg;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Buttons (Refined, no glowing shadows)
+   Buttons
    ───────────────────────────────────────────────────────────────────────────── */
 .btn-primary {
-  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm text-white bg-brand hover:bg-brand-hover active:translate-y-[1px] transition-all duration-150 cursor-pointer;
+  @apply inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider text-white bg-brand hover:bg-brand-hover active:translate-y-[1px] transition-all duration-150 cursor-pointer;
 }
 
 .btn-secondary {
-  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm text-ink bg-transparent border-2 border-ink hover:bg-ink hover:text-ink-onDark active:translate-y-[1px] transition-all duration-150 cursor-pointer;
+  @apply inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider text-ink bg-transparent border border-ink hover:bg-ink hover:text-ink-onDark active:translate-y-[1px] transition-all duration-150 cursor-pointer;
 }
 
 .btn-on-dark {
-  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm text-ink bg-surface-1 hover:bg-white active:translate-y-[1px] transition-all duration-150 cursor-pointer;
+  @apply inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider text-ink bg-surface-1 hover:bg-white active:translate-y-[1px] transition-all duration-150 cursor-pointer;
 }
 
 .btn-ghost {
-  @apply inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-semibold text-ink hover:text-brand transition-colors cursor-pointer;
+  @apply inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-bold text-ink hover:text-brand transition-colors cursor-pointer;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Signature Brand Lines & Motifs (from proposal)
+   Signature Brand Lines
    ───────────────────────────────────────────────────────────────────────────── */
 .red-bottom-bar {
   border-bottom: 3px solid #A81818;
@@ -143,24 +152,16 @@ h1, h2, h3, h4, .font-heading {
 }
 
 .red-left-bar {
-  border-left: 4px solid #A81818;
-}
-
-/* Subtle Geometric Motifs */
-.motif-triangles-dark {
-  background-image: 
-    linear-gradient(135deg, rgba(168, 24, 24, 0.08) 25%, transparent 25%),
-    linear-gradient(225deg, rgba(26, 22, 20, 0.12) 25%, transparent 25%);
-  background-size: 40px 40px;
+  border-left: 3px solid #A81818;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Form Inputs
    ───────────────────────────────────────────────────────────────────────────── */
 .input-clean {
-  @apply w-full h-12 px-4 rounded-lg border border-border bg-surface-1 text-ink placeholder:text-ink-muted text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors;
+  @apply w-full h-10 sm:h-11 px-3.5 rounded-lg border border-border bg-surface-1 text-ink placeholder:text-ink-muted text-xs sm:text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors;
 }
 
 .label-clean {
-  @apply block text-xs font-bold uppercase tracking-wider text-ink-secondary mb-1.5;
+  @apply block text-[11px] font-bold uppercase tracking-wider text-ink-secondary mb-1;
 }
