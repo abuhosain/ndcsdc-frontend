@@ -101,48 +101,35 @@ export default function NavbarClient() {
       <div className="container-custom">
         <div className="flex items-center justify-between h-20">
           
-          {/* Dual Crest & Club Branding */}
+          {/* NDCSDC Club Branding */}
           <Link
             href="/"
             className="flex items-center gap-3 group shrink-0"
             onClick={() => setMobileMenuOpen(false)}
           >
-            <div className="flex items-center gap-1.5 bg-surface-1 p-1 rounded-md border border-border/40 shadow-sm">
-              <div className="relative w-8 h-8 flex items-center justify-center bg-white rounded-sm overflow-hidden">
-                <Image
-                  src="/logos/ndc-college-logo.jpeg"
-                  alt="Notre Dame College Crest"
-                  width={32}
-                  height={32}
-                  className="object-contain"
-                  priority
-                />
-              </div>
-              <div className="w-[1px] h-6 bg-border"></div>
-              <div className="relative w-8 h-8 flex items-center justify-center bg-white rounded-sm overflow-hidden">
-                <Image
-                  src="/logos/ndcsdc-logo.jpeg"
-                  alt="NDCSDC Seal"
-                  width={32}
-                  height={32}
-                  className="object-contain"
-                  priority
-                />
-              </div>
+            <div className="relative w-10 h-10 flex items-center justify-center bg-white rounded-lg p-1 border border-border/40 shadow-sm shrink-0 overflow-hidden">
+              <Image
+                src="/logos/ndcsdc-logo.jpeg"
+                alt="NDCSDC Seal"
+                width={36}
+                height={36}
+                className="object-contain"
+                priority
+              />
             </div>
 
-            <div className="flex flex-col">
-              <span className="font-display font-extrabold text-base tracking-wider uppercase text-white leading-none">
+            <div className="flex flex-col min-w-0">
+              <span className="font-display font-extrabold text-lg tracking-wider uppercase text-white leading-none whitespace-nowrap">
                 NDCSDC
               </span>
-              <span className="text-[10px] text-ink-muted tracking-tight mt-1 hidden sm:block">
+              <span className="text-[10px] text-ink-muted tracking-tight mt-1 hidden sm:block whitespace-nowrap">
                 Notre Dame Career & Skill Development Club
               </span>
             </div>
           </Link>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden xl:flex items-center gap-0.5" aria-label="Main Navigation">
+          <nav className="hidden xl:flex items-center gap-0.5 shrink-0" aria-label="Main Navigation">
             {NAV_STRUCTURE.map((group) => {
               const active = isGroupActive(group);
 

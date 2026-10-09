@@ -4,6 +4,7 @@ import type { ApiEnvelope } from "@/types/auth";
 
 export interface SummitTrack {
   id: string;
+  slug?: string;
   name: string;
   stream: string;
   capacity: number;

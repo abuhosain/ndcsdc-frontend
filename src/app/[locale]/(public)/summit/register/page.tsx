@@ -57,8 +57,11 @@ function RegisterFormContent() {
           if (trackParam) {
             const matched = res.data.find(
               (t) =>
-                t.stream?.toLowerCase() === trackParam ||
-                t.name?.toLowerCase().includes(trackParam) ||
+                (t.slug && t.slug.toLowerCase() === trackParam) ||
+                (t.slug && trackParam.includes(t.slug.toLowerCase())) ||
+                (t.slug && t.slug.toLowerCase().includes(trackParam)) ||
+                (t.name && t.name.toLowerCase().includes(trackParam)) ||
+                (t.stream && t.stream.toLowerCase().includes(trackParam)) ||
                 t.id === trackParam
             );
             if (matched) {

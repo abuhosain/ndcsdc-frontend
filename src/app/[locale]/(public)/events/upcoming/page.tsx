@@ -1,18 +1,47 @@
 import { Link } from "@/i18n/navigation";
 import PageHeader from "@/components/common/PageHeader";
-import { getEvents } from "@/services/common";
+import { getEvents, type EventItem } from "@/services/common";
 import { Calendar, MapPin, ArrowRight } from "lucide-react";
 
+const DEFAULT_UPCOMING_EVENTS: EventItem[] = [
+  {
+    id: "act-1",
+    title: "IBA DU Masterclass: Verbal & Analytical Speed Drills",
+    slug: "iba-du-masterclass-verbal-analytical",
+    category: "Workshop",
+    isUpcoming: true,
+    isFeatured: false,
+    eventStatus: "OPEN",
+    venue: "NDC Audio-Visual Hall (AV-1)",
+    date: "2026-06-20T10:00:00Z",
+    registrationUrl: "https://forms.gle/sample-iba-workshop",
+    summary: "An intensive session on reading comprehension speed, sentence correction traps, and mathematical heuristics for IBA aspirants.",
+  },
+  {
+    id: "act-2",
+    title: "1st National Academic & Career Summit 2026 (NACS 2026)",
+    slug: "nacs-2026-flagship-summit",
+    category: "Summit",
+    isUpcoming: true,
+    isFeatured: true,
+    eventStatus: "OPEN",
+    venue: "Notre Dame College Auditorium & Campus, Dhaka",
+    date: "2026-11-14T09:00:00Z",
+    registrationUrl: "/summit/register",
+    summary: "The flagship summit featuring 4 specialized tracks in IBA, BUET, Medical, and Abroad studies with top nationwide mentors and 1,800 delegates.",
+  },
+];
+
 export default async function UpcomingEventsPage() {
-  let upcomingEvents: any[] = [];
+  let upcomingEvents: EventItem[] = DEFAULT_UPCOMING_EVENTS;
 
   try {
     const res = await getEvents({ isUpcoming: true });
-    if (res?.data) {
+    if (res?.data && res.data.length > 0) {
       upcomingEvents = res.data;
     }
   } catch {
-    // Fallback
+    // Keep DEFAULT_UPCOMING_EVENTS fallback
   }
 
   return (
@@ -110,26 +139,46 @@ export default async function UpcomingEventsPage() {
                   </div>
 
                   <div className="shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-border/50 flex flex-col items-start md:items-end gap-2">
-                    {event.registrationUrl ? (
-                      <Link
-                        href={event.registrationUrl}
-                        className={`text-xs uppercase tracking-wider py-2 px-4 font-bold inline-flex items-center gap-1 ${
-                          isFull
-                            ? "bg-neutral-300 text-neutral-600 cursor-not-allowed pointer-events-none rounded-lg"
-                            : "btn-primary"
-                        }`}
-                      >
-                        <span>{isFull ? "Registration Closed" : "Register Now"}</span>
-                        {!isFull && <ArrowRight className="w-3 h-3" />}
-                      </Link>
-                    ) : (
-                      <Link
-                        href={`/events/past/${event.slug}`}
-                        className="btn-secondary text-xs uppercase tracking-wider py-1.5 px-3.5 font-bold"
-                      >
-                        Overview
-                      </Link>
-                    )}
+                    {(() => {
+                      const isSummit = event.category?.toLowerCase() === "summit" || event.slug.includes("summit");
+                      const defaultRegPath = isSummit ? "/summit/register" : `/events/register?slug=${event.slug}`;
+                      const regPath = event.registrationUrl && !event.registrationUrl.includes("forms.gle") && !event.registrationUrl.includes("drive.google")
+                        ? event.registrationUrl
+                        : defaultRegPath;
+                      const isExternal = regPath.startsWith("http://") || regPath.startsWith("https://");
+
+                      if (isExternal) {
+                        return (
+                          <a
+                            href={regPath}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`text-xs uppercase tracking-wider py-2 px-4 font-bold inline-flex items-center gap-1 ${
+                              isFull
+                                ? "bg-neutral-300 text-neutral-600 cursor-not-allowed pointer-events-none rounded-lg"
+                                : "btn-primary"
+                            }`}
+                          >
+                            <span>{isFull ? "Registration Closed" : "Register Now"}</span>
+                            {!isFull && <ArrowRight className="w-3 h-3" />}
+                          </a>
+                        );
+                      }
+
+                      return (
+                        <Link
+                          href={regPath}
+                          className={`text-xs uppercase tracking-wider py-2 px-4 font-bold inline-flex items-center gap-1 ${
+                            isFull
+                              ? "bg-neutral-300 text-neutral-600 cursor-not-allowed pointer-events-none rounded-lg"
+                              : "btn-primary"
+                          }`}
+                        >
+                          <span>{isFull ? "Registration Closed" : "Register Now"}</span>
+                          {!isFull && <ArrowRight className="w-3 h-3" />}
+                        </Link>
+                      );
+                    })()}
                   </div>
                 </div>
               );

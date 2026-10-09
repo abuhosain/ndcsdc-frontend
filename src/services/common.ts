@@ -106,6 +106,7 @@ export interface EventItem {
   slug: string;
   category: string;
   isUpcoming: boolean;
+  isFeatured?: boolean;
   eventStatus?: "OPEN" | "CLOSING_SOON" | "FULL" | "CLOSED" | string;
   venue?: string | null;
   date?: string | null;
@@ -200,9 +201,10 @@ export async function joinAlumniNetwork(payload: {
   return postPublic<ApiEnvelope<any>>(alumniEndpoints.join, payload);
 }
 
-export async function getEvents(filters?: { isUpcoming?: boolean; category?: string; year?: string }) {
+export async function getEvents(filters?: { isUpcoming?: boolean; isFeatured?: boolean; category?: string; year?: string }) {
   const params = new URLSearchParams();
   if (typeof filters?.isUpcoming === "boolean") params.append("isUpcoming", String(filters.isUpcoming));
+  if (typeof filters?.isFeatured === "boolean") params.append("isFeatured", String(filters.isFeatured));
   if (filters?.category && filters.category !== "ALL") params.append("category", filters.category);
   if (filters?.year && filters.year !== "ALL") params.append("year", filters.year);
   const url = `${activityEndpoints.list}${params.toString() ? `?${params.toString()}` : ""}`;
